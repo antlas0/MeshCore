@@ -36,7 +36,7 @@ lib_deps =
   ${esp32_ota.lib_deps}
 ```
 
-Once the TBeam is connected on your local area network, TCP connections can be made to launch [commands](https://docs.meshcore.io/cli_commands/)
+Once the TBeam is connected on your local area network, TCP connections can be made to launch [commands](https://docs.meshcore.io/cli_commands/).
 
 ```bash
 $ python3 cmd.py --ip 192.168.1.19 --port 5000 --payload "stats-packets"
