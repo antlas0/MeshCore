@@ -17,7 +17,7 @@ void halt() {
   while (1) ;
 }
 
-static char command[160];
+static char command[160]={0};
 
 // For power saving
 unsigned long lastActive = 0; // mark last active time
@@ -26,6 +26,14 @@ unsigned long nextSleepinSecs = 120; // next sleep in seconds. The first sleep (
 #if defined(PIN_USER_BTN) && defined(_SEEED_SENSECAP_SOLAR_H_)
 static unsigned long userBtnDownAt = 0;
 #define USER_BTN_HOLD_OFF_MILLIS 1500
+#endif
+
+#ifdef WIFI_SSID
+  #include <helpers/esp32/SerialWifiInterface.h>
+  SerialWifiInterface serial_interface;
+  #ifndef WIFI_TCP_PORT
+    #define WIFI_TCP_PORT 5000
+  #endif
 #endif
 
 void setup() {
@@ -38,6 +46,12 @@ void setup() {
   // give some extra time for serial to settle so
   // boot debug messages can be seen on terminal
   delay(5000);
+#endif
+
+#if defined(WIFI_SSID) && defined(WIFI_PWD)
+  board.setInhibitSleep(true);   // prevent sleep when WiFi is active
+  WiFi.begin(WIFI_SSID, WIFI_PWD);
+  serial_interface.begin(WIFI_TCP_PORT);
 #endif
 
   // For power saving
@@ -106,6 +120,24 @@ void setup() {
 }
 
 void loop() {
+
+#ifdef WIFI_SSID
+  uint8_t buffer[MAX_FRAME_SIZE]={0};
+  size_t blen = serial_interface.checkRecvFrame(buffer);
+
+  if (blen > 0) {
+    char reply[256]={0};
+    buffer[blen] = '\0';  // Null-terminate for string commands
+    Serial.println((char*)buffer);
+    the_mesh.handleCommand(0, (char*)buffer, reply);
+    Serial.println(reply);
+
+    // Send response back via WiFi
+    if (strlen(reply) > 0) {
+      serial_interface.writeFrame((uint8_t*)reply, strlen(reply));
+    }
+  }
+#else
   int len = strlen(command);
   while (Serial.available() && len < sizeof(command)-1) {
     char c = Serial.read();
@@ -131,6 +163,7 @@ void loop() {
 
     command[0] = 0;  // reset command buffer
   }
+#endif
 
 #if defined(PIN_USER_BTN) && defined(_SEEED_SENSECAP_SOLAR_H_)
   // Hold the user button to power off the SenseCAP Solar repeater.
