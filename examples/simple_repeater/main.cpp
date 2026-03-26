@@ -28,7 +28,7 @@ static unsigned long userBtnDownAt = 0;
 #define USER_BTN_HOLD_OFF_MILLIS 1500
 #endif
 
-#ifdef WIFI_SSID
+#if defined(ESP32) && defined(WIFI_SSID)
   #include <helpers/esp32/SerialWifiInterface.h>
   SerialWifiInterface serial_interface;
   #ifndef TCP_PORT
@@ -48,7 +48,7 @@ void setup() {
   delay(5000);
 #endif
 
-#if defined(WIFI_SSID) && defined(WIFI_PWD)
+#if defined(ESP32) && defined(WIFI_SSID) && defined(WIFI_PWD)
   board.setInhibitSleep(true);   // prevent sleep when WiFi is active
   WiFi.begin(WIFI_SSID, WIFI_PWD);
   serial_interface.begin(TCP_PORT);
@@ -120,8 +120,7 @@ void setup() {
 }
 
 void loop() {
-
-#ifdef WIFI_SSID
+ #if defined(ESP32) && defined(WIFI_SSID)
   uint8_t buffer[MAX_FRAME_SIZE]={0};
   size_t blen = serial_interface.checkRecvFrame(buffer);
 
