@@ -126,13 +126,12 @@ void loop() {
   size_t blen = serial_interface.checkRecvFrame(buffer);
 
   if (blen > 0) {
-    char reply[256]={0};
-    buffer[blen] = '\0';  // Null-terminate for string commands
+    char reply[160]={0};
+    buffer[blen]='\0';
     Serial.println((char*)buffer);
     the_mesh.handleCommand(0, (char*)buffer, reply);
     Serial.println(reply);
 
-    // Send response back via WiFi
     if (strlen(reply) > 0) {
       serial_interface.writeFrame((uint8_t*)reply, strlen(reply));
     }

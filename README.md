@@ -26,8 +26,6 @@ build_flags =
   -D WIFI_SSID='"SSID"'
   -D TCP_PORT='"5000"'
   -D WIFI_PWD='"password"'
-  -D WIFI_DEBUG_LOGGING=1
-  -D ESP32_WIFI=1
 build_src_filter = ${LilyGo_TBeam_SX1276.build_src_filter}
   +<helpers/esp32/*.cpp>
   +<../examples/simple_repeater>
