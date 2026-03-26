@@ -23,6 +23,7 @@ build_flags =
   ${LilyGo_TBeam_SX1276.build_flags}
   -D MAX_NEIGHBOURS=50
   -D PERSISTANT_GPS=1
+  -D ESP32=1
   -D WIFI_SSID='"SSID"'
   -D TCP_PORT='"5000"'
   -D WIFI_PWD='"password"'
