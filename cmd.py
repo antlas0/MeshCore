@@ -12,7 +12,6 @@ def send_frame_and_wait_for_response(ip, port, payload):
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.connect((ip, port))
         s.sendall(frame)
-        print(f"Sent frame: length={length}, payload='{payload}'")
 
         # Wait for response
         response_header = s.recv(3)  # 1 byte type + 2 bytes length
@@ -23,7 +22,7 @@ def send_frame_and_wait_for_response(ip, port, payload):
         response_type, response_length = struct.unpack('<BH', response_header)
         response_payload = s.recv(response_length).decode('utf-8')
 
-        print(f"Received frame: type={response_type}, length={response_length}, payload='{response_payload}'")
+        print(f"{payload}: {response_payload}")
 
 def main():
     parser = argparse.ArgumentParser(description='Send a TCP frame with a string payload and wait for a response.')
@@ -33,7 +32,11 @@ def main():
 
     args = parser.parse_args()
 
-    send_frame_and_wait_for_response(args.ip, args.port, args.payload)
+    if args.payload == "status":
+        for cmd in ["board", "ver", "get name", "get radio", "get lat", "get lon","get owner.info", "get public.key", "get repeat", "get role","get txdelay", "get rxdelay", "get af", "get multi.acks", "region", "get path.hash.mode", "stats-core", "stats-packets", "stats-radio"]:
+            send_frame_and_wait_for_response(args.ip, args.port, cmd)
+    else:
+        send_frame_and_wait_for_response(args.ip, args.port, args.payload)
 
 if __name__ == "__main__":
     main()
