@@ -31,8 +31,8 @@ static unsigned long userBtnDownAt = 0;
 #ifdef WIFI_SSID
   #include <helpers/esp32/SerialWifiInterface.h>
   SerialWifiInterface serial_interface;
-  #ifndef WIFI_TCP_PORT
-    #define WIFI_TCP_PORT 5000
+  #ifndef TCP_PORT
+    #define TCP_PORT 5000
   #endif
 #endif
 
@@ -51,7 +51,7 @@ void setup() {
 #if defined(WIFI_SSID) && defined(WIFI_PWD)
   board.setInhibitSleep(true);   // prevent sleep when WiFi is active
   WiFi.begin(WIFI_SSID, WIFI_PWD);
-  serial_interface.begin(WIFI_TCP_PORT);
+  serial_interface.begin(TCP_PORT);
 #endif
 
   // For power saving
